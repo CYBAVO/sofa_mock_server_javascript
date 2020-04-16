@@ -1,7 +1,12 @@
 const cfg = require('./config');
 const sqlite3 = require('sqlite3');
+const fs = require('fs');
 
 (function() {
+  const runtime = './runtime';
+  if (!fs.existsSync(runtime)) {
+    fs.mkdirSync(runtime);
+  }
   const db = new sqlite3.Database(cfg.db_path);
   const sql = `CREATE TABLE IF NOT EXISTS mock_apicode
     (api_code_id integer,
