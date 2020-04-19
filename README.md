@@ -1067,6 +1067,8 @@ The response includes the following parameters:
 	- npm install
 	- npm start
 
+> Required version: node v10.19.0 or later (npm v6.13.4 or later)
+
 ### Setup configuration
 >	Set the backend server URL to the following configuration in mockserver.conf.json
 
@@ -1080,7 +1082,7 @@ The response includes the following parameters:
 - 	Put API code/secret to mock server's database
 
 ```
-curl -X POST -d '{"api_code":"API-CODE","api_secret":"API-SECRET"}' \
+curl -X POST -H "Content-Type: application/json" -d '{"api_code":"API-CODE","api_secret":"API-SECRET"}' \
 http://localhost:8889/v1/mock/wallets/{WALLET-ID}/apitoken
 ```
 
@@ -1271,6 +1273,76 @@ http://localhost:8889/v1/mock/wallets/{WALLET-ID}/addresses/verify
   <tr></tr>
   <tr></tr>
   <tr>
+    <td>serial</td>
+    <td>int</td>
+    <td>The unique serial of callback</td>
+  </tr>
+  <tr>
+    <td>order_id</td>
+    <td>string</td>
+    <td>The unique order ID of withdrawal request</td>
+  </tr>
+  <tr>
+    <td>currency</td>
+    <td>string</td>
+    <td>Cryptocurrency of the callback</td>
+  </tr>
+  <tr>
+    <td>txid</td>
+    <td>string</td>
+    <td>Transaction identifier</td>
+  </tr>
+  <tr>
+    <td>block_height</td>
+    <td>int64</td>
+    <td>The block height show the transaction was packed in which block</td>
+  </tr>
+  <tr>
+    <td>tindex</td>
+    <td>int</td>
+    <td>The index of transaction in its block</td>
+  </tr>
+  <tr>
+    <td>vout_index</td>
+    <td>int</td>
+    <td>The index of vout in its transaction</td>
+  </tr>
+  <tr>
+    <td>amount</td>
+    <td>string</td>
+    <td>Transaction amount denominated in the smallest cryptocurrency unit</td>
+  </tr>
+  <tr>
+    <td>fees</td>
+    <td>string</td>
+    <td>Mining fee denominated in the smallest cryptocurrency unit</td>
+  </tr>
+  <tr>
+    <td>broadcast_at</td>
+    <td>int64</td>
+    <td>When to broadcast the transaction in UTC time</td>
+  </tr>
+  <tr>
+    <td>chain_at</td>
+    <td>int64</td>
+    <td>When was the transaction packed into block (in chain) in UTC time</td>
+  </tr>
+  <tr>
+    <td>from_address</td>
+    <td>string</td>
+    <td>The source address of the transaction</td>
+  </tr>
+  <tr>
+    <td>to_address</td>
+    <td>string</td>
+    <td>The destination address of the transaction</td>
+  </tr>
+  <tr>
+    <td>wallet_id</td>
+    <td>int64</td>
+    <td>The wallet ID of the callback</td>
+  </tr>
+  <tr>
     <td>state</td>
     <td>int</td>
     <td rowspan="9">
@@ -1294,6 +1366,11 @@ http://localhost:8889/v1/mock/wallets/{WALLET-ID}/addresses/verify
   <tr></tr>
   <tr></tr>
   <tr>
+    <td>confirm_blocks</td>
+    <td>int64</td>
+    <td>Number of confirmations</td>
+  </tr>
+  <tr>
     <td>processing_state</td>
     <td>int</td>
     <td rowspan="3">
@@ -1301,6 +1378,13 @@ http://localhost:8889/v1/mock/wallets/{WALLET-ID}/addresses/verify
       <b>1</b> - in chain (the transaction is already on the blockchain but the confirmations have not been met)<br>
       <b>2</b> - done (the transaction is already on the blockchain and satisfy confirmations)<br>
     </td>
+  </tr>
+  <tr></tr>
+  <tr></tr>
+  <tr>
+    <td>addon</td>
+    <td>key-value pairs</td>
+    <td>The extra information of this callback</td>
   </tr>
 </table>
 
