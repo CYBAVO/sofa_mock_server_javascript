@@ -1,16 +1,14 @@
 const express = require('express');
-const api = require('../helper/request')
+const api = require('../helper/apicaller');
 const apicode = require('../models/apicode');
 const crypto = require('crypto');
 
 const router = express.Router();
 
-function getQueryParam(req, paramName, defaultValue) {
-  const value = req.param(paramName);
-  if (value) {
-    return value;
-  }
-  return defaultValue;
+function getQueryParams(query) {
+  return Object.keys(query).map((key) => {
+    return `${key}=${query[key]}`;
+  }); 
 }
 
 router.post('/:wallet_id/apitoken', function(req, res) {
@@ -27,7 +25,8 @@ router.post('/:wallet_id/addresses', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.createDepositWalletAddresses(req.params.wallet_id, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses`, null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -40,9 +39,8 @@ router.get('/:wallet_id/addresses', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const startIndex = getQueryParam(req, 'start_index', 0);
-  const requestNumber = getQueryParam(req, 'request_number', 1000);
-  const apires = await api.getDepositWalletAddresses(req.params.wallet_id, startIndex, requestNumber);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses`, getQueryParams(req.query), null);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -55,7 +53,8 @@ router.get('/:wallet_id/pooladdress', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getDepositWalletPoolAddress(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/pooladdress`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -68,7 +67,9 @@ router.post('/:wallet_id/callback/resend', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.resendCallback(req.params.wallet_id, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/collection/notifications/manual`,
+    null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -81,7 +82,9 @@ router.post('/:wallet_id/withdraw', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.withdrawTransactions(req.params.wallet_id, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/transactions`,
+    null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -94,7 +97,8 @@ router.get('/:wallet_id/sender/transactions/:order_id', async function(req, res)
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getWithdrawTransactionState(req.params.wallet_id, req.params.order_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/transactions/${req.params.order_id}`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -107,7 +111,8 @@ router.get('/:wallet_id/sender/balance', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getWithdrawalWalletBalance(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/balance`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -120,7 +125,8 @@ router.get('/:wallet_id/apisecret', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getTxAPITokenStatus(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/apisecret`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -133,15 +139,8 @@ router.get('/:wallet_id/notifications', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const fromTime = getQueryParam(req, 'from_time', -1);
-  const toTime = getQueryParam(req, 'to_time', -1);
-  const notificationType = getQueryParam(req, 'type', -1);
-  if (fromTime === -1 || toTime === -1 || notificationType === -1) {
-    res.status(400).json({ error: 'invalid parameters' });
-    return
-  }
-
-  const apires = await api.getNotifications(req.params.wallet_id, fromTime, toTime, notificationType);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/notifications`, getQueryParams(req.query));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -154,7 +153,9 @@ router.post('/:wallet_id/notifications/get_by_id', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getNotificationByID(req.params.wallet_id, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/notifications/get_by_id`,
+    null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -167,18 +168,8 @@ router.get('/:wallet_id/transactions', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const fromTime = getQueryParam(req, 'from_time', -1);
-  const toTime = getQueryParam(req, 'to_time', -1);
-  const startIndex = getQueryParam(req, 'start_index', 0);
-  const requestNumber = getQueryParam(req, 'request_number', 0);
-  const state = getQueryParam(req, 'state', -1);
-  if (fromTime === -1 || toTime === -1) {
-    res.status(400).json({ error: 'invalid parameters' });
-    return
-  }
-
-  const apires = await api.getTransactionHistory(req.params.wallet_id, fromTime, toTime,
-    startIndex, requestNumber, state);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/transactions`, getQueryParams(req.query));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -191,7 +182,8 @@ router.get('/:wallet_id/blocks', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getWalletBlockInfo(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/blocks`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -204,7 +196,8 @@ router.get('/:wallet_id/addresses/invalid-deposit', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getInvalidDepositAddresses(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses/invalid-deposit`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -217,7 +210,8 @@ router.get('/:wallet_id/info', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.getWalletInfo(req.params.wallet_id);
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/info`);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -230,7 +224,9 @@ router.post('/:wallet_id/addresses/verify', async function(req, res) {
     res.status(400).json({ error: 'invalid parameters' });
     return;
   }
-  const apires = await api.verifyAddresses(req.params.wallet_id, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses/verify`,
+    null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
