@@ -13,8 +13,7 @@
 <a name="get-started"></a>
 # Get Started
 
-- Get API code and API secret of the wallet on web console
-- Refer to [mock server](#mock-server) sample code 
+- Refer to [mock server](#mock-server) to integrate CYBAVO SOFA API.
 
 <a name="deposit-wallet-api"></a>
 # Deposit Wallet API
@@ -35,15 +34,17 @@ Refer to [here](https://github.com/CYBAVO/SOFA_MOCK_SERVER#query-api-token-statu
 # Mock Server
 
 ### How to compile
-- Put sample code to {YOUR\_GO\_PATH}/github.com/cybavo/SOFA\_MOCK\_SERVER
-- Execute
-	- npm install
-	- npm start
 
 > Required version: node v10.19.0 or later (npm v6.13.4 or later)
 
+- Commands
+	- $ npm install
+	- $ npm start
+
+
 ### Setup configuration
->	Set the backend server URL to the following configuration in mockserver.conf.json
+
+>	Configure CYBAVO API server URL in mockserver.conf.json
 
 ```
 "api_server_url": "BACKEND_SERVER_URL"
@@ -76,7 +77,7 @@ http://localhost:8889/v1/mock/wallets/withdrawal/callback
 
 > The withdrawal authentication callback URL once set, every withrawal request will callback this URL to get authentication to proceed withdrawal request.
 > 
-> Refer to [WithdrawalCallback()](https://github.com/CYBAVO/SOFA_MOCK_SERVER/blob/master/controllers/OuterController.go#L183) function in mock server OuterController.go
+> Refer to /callback handler in mock server wallets.js
 
 <a name="curl-testing-commands"></a>
 # CURL Testing Commands
@@ -87,3 +88,4 @@ Refer to [here](https://github.com/CYBAVO/SOFA_MOCK_SERVER#curl-testing-commands
 # Other Language Versions
 - [GO](https://github.com/CYBAVO/SOFA_MOCK_SERVER)
 - [JAVA](https://github.com/CYBAVO/SOFA_MOCK_SERVER_JAVA)
+- [PHP](https://github.com/CYBAVO/SOFA_MOCK_SERVER_PHP)
