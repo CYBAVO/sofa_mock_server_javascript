@@ -92,6 +92,25 @@ router.post('/:wallet_id/withdraw', async function(req, res) {
   }
 });
 
+router.post('/:wallet_id/sender/transactions/:order_id/cancel', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  if (!req.params.order_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/transactions/${req.params.order_id}/cancel`,
+    null, null);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 router.get('/:wallet_id/sender/transactions/:order_id', async function(req, res) {
   if (!req.params.wallet_id || !req.params.order_id) {
     res.status(400).json({ error: 'invalid parameters' });
@@ -156,6 +175,48 @@ router.post('/:wallet_id/notifications/get_by_id', async function(req, res) {
   const apires = await api.makeRequest(req.params.wallet_id, "POST",
     `/v1/sofa/wallets/${req.params.wallet_id}/notifications/get_by_id`,
     null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.get('/:wallet_id/receiver/notifications/txid/:txid/:vout_index', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  if (!req.params.txid) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  if (!req.params.vout_index) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/receiver/notifications/txid/${req.params.txid}/${req.params.vout_index}`,
+    null, null);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.get('/:wallet_id/sender/notifications/order_id/:order_id', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  if (!req.params.order_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/notifications/order_id/${req.params.order_id}`,
+    null, null);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {

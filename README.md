@@ -7,13 +7,13 @@
 - [Query API](#query-api)
 - Testing
 	- [Mock Server](#mock-server)
-	- [CURL Testing Commands](#curl-testing-commands)
+	- [cURL Testing Commands](#curl-testing-commands)
 	- [Other Language Versions](#other-language-versions)
 
 <a name="get-started"></a>
 # Get Started
 
-- Refer to [mock server](#mock-server) to integrate CYBAVO SOFA API.
+Refer to [here](https://github.com/CYBAVO/SOFA_MOCK_SERVER#get-started) for detailed introduction.
 
 <a name="deposit-wallet-api"></a>
 # Deposit Wallet API
@@ -80,12 +80,12 @@ http://localhost:8889/v1/mock/wallets/withdrawal/callback
 > Refer to /callback handler in mock server wallets.js
 
 <a name="curl-testing-commands"></a>
-# CURL Testing Commands
+# cURL Testing Commands
 
 Refer to [here](https://github.com/CYBAVO/SOFA_MOCK_SERVER#curl-testing-commands) for curl testing commands.
 
 <a name="other-language-versions"></a>
 # Other Language Versions
-- [GO](https://github.com/CYBAVO/SOFA_MOCK_SERVER)
-- [JAVA](https://github.com/CYBAVO/SOFA_MOCK_SERVER_JAVA)
+- [Go](https://github.com/CYBAVO/SOFA_MOCK_SERVER)
+- [Java](https://github.com/CYBAVO/SOFA_MOCK_SERVER_JAVA)
 - [PHP](https://github.com/CYBAVO/SOFA_MOCK_SERVER_PHP)
