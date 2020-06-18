@@ -56,7 +56,7 @@ Refer to [here](https://github.com/CYBAVO/SOFA_MOCK_SERVER#query-api-token-statu
 - 	Put API code/secret to mock server's database
 
 ```
-curl -X POST -d '{"api_code":"API-CODE","api_secret":"API-SECRET"}' \
+curl -X POST -H "Content-Type: application/json" -d '{"api_code":"API-CODE","api_secret":"API-SECRET"}' \
 http://localhost:8889/v1/mock/wallets/{WALLET-ID}/apitoken
 ```
 
