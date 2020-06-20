@@ -328,6 +328,63 @@ router.post('/callback', async function(req, res) {
     res.status(400).send('Bad checksum');
     return;
   }
+
+  const CallbackType = {
+    Deposit: 1,
+    Withdraw: 2,
+    Collect: 3,
+    Airdrop: 4,
+  };
+  const ProcessingState = {
+    InPool: 0,
+    InChain: 1,
+    Done: 2,
+  };
+  const CallbackState = {
+    Init: 0,
+    Holding: 1,
+    InPool: 2,
+    InChain: 3,
+    Done: 4,
+    Failed: 5,
+    Resended: 6,
+    RiskControl: 7,
+    Cancelled: 8,
+    UTXOUnavailable: 9,
+    Dropped: 10,
+    InChainFailed: 11,
+    Paused: 12,
+  };
+
+  if (req.body.type === CallbackType.Deposit) {
+    //
+    // deposit unique ID
+    const uniqueID = `${req.body.txid}_${req.body.vout_index}`;
+    //
+    if (req.body.processing_state === ProcessingState.Done) {
+      // deposit succeeded, use the deposit unique ID to update your business logic
+    }
+  } else if (req.body.type === CallbackType.Withdraw) {
+    //
+    // withdrawal unique ID
+    const uniqueID = req.body.order_id;
+    //
+    if (req.body.state === CallbackState.InChain && req.body.processing_state === ProcessingState.Done) {
+      // withdrawal succeeded, use the withdrawal uniqueID to update your business logic
+    } else if (req.body.state === CallbackState.Failed || req.body.state === CallbackState.InChainFailed) {
+      // withdrawal failed, use the withdrawal unique ID to update your business logic
+    }
+  } else if (req.body.type === CallbackType.Airdrop) {
+    //
+    // airdrop unique ID
+    const uniqueID = `${req.body.txid}_${req.body.vout_index}`;
+    //
+    if (req.body.processing_state === ProcessingState.Done) {
+      // airdrop succeeded, use the airdrop unique ID to update your business logic
+    }
+  }
+
+  // reply 200 OK to confirm the callback has been processed
   res.status(200).send('OK');
 });
 
