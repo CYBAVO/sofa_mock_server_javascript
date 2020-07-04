@@ -17,6 +17,7 @@ router.post('/:wallet_id/apitoken', function(req, res) {
     return;
   }
   apicode.setAPICode(req.params.wallet_id, req.body.api_code, req.body.api_secret);
+  console.log('API Code:', req.body.api_code, 'API Secret:', req.body.api_secret);
   res.status(200).json({ result: 1 });
 });
 

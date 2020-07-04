@@ -64,6 +64,7 @@ module.exports.makeRequest = async function (walletID, method, api, params, post
   const apiCodeObj = await apicode.getAPICode(walletID).catch(() => {
   });
   if (!apiCodeObj) {
+    console.log(`unable to find api code/secret of wallet_id ${walletID}`);
     return { error: `unable to find api code/secret of wallet_id ${walletID}` };
   }
   const options = {
@@ -79,8 +80,12 @@ module.exports.makeRequest = async function (walletID, method, api, params, post
 
   try {
     let result = await doRequest(url, options, postData);
-    return tryParseJSON(result);
+    const resp = tryParseJSON(result);
+    console.log('response ->', resp ? JSON.stringify(resp) : '');
+    return resp;
   } catch(error) {
-    return tryParseJSON(error);
+    const resp = tryParseJSON(error);
+    console.log('response ->', resp ? JSON.stringify(resp) : '');
+    return resp;
   }
 }
