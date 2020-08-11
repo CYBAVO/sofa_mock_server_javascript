@@ -71,7 +71,8 @@ module.exports.makeRequest = async function (walletID, method, api, params, post
     method,
     headers: {
       'X-API-CODE': apiCodeObj.code,
-      'X-CHECKSUM': buildChecksum(params, apiCodeObj.secret, t, r, postData)
+      'X-CHECKSUM': buildChecksum(params, apiCodeObj.secret, t, r, postData),
+      "User-Agent": "nodejs",
     },
   };
   if (method === 'POST') {
