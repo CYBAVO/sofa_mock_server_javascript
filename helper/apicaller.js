@@ -8,7 +8,11 @@ function buildChecksum(params, secret, t, r, postData) {
   const p = params || [];
   p.push(`t=${t}`, `r=${r}`);
   if (!!postData) {
-    p.push(postData);
+    if (typeof postData === 'string') {
+      p.push(postData);
+    } else {
+      p.push(JSON.stringify(postData));
+    }
   }
   p.sort();
   p.push(`secret=${secret}`);
