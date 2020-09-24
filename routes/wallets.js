@@ -140,6 +140,20 @@ router.get('/:wallet_id/sender/transactions/:order_id', async function(req, res)
   }
 });
 
+router.get('/:wallet_id/sender/transactions/:order_id/all', async function(req, res) {
+  if (!req.params.wallet_id || !req.params.order_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/transactions/${req.params.order_id}/all`);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 router.get('/:wallet_id/sender/balance', async function(req, res) {
   if (!req.params.wallet_id) {
     res.status(400).json({ error: 'invalid parameters' });
