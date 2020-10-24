@@ -368,6 +368,20 @@ router.get('/:wallet_id/receiver/balance', async function(req, res) {
   }
 });
 
+router.get('/:wallet_id/vault/balance', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/vault/balance`);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 router.post('/callback', async function(req, res) {
   console.log('callback ->', req.body);
 
