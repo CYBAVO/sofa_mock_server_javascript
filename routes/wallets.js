@@ -481,4 +481,18 @@ router.post('/withdrawal/callback', function(req, res) {
   res.status(200).send('OK');
 });
 
+router.get('/:wallet_id/addresses/contract_txid', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses/contract_txid`, getQueryParams(req.query), null);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 module.exports = router;
