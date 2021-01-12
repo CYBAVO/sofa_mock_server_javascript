@@ -49,6 +49,9 @@ function doRequest(url, options, postData) {
       reject(error);
     });
     if (!!postData) {
+      if (options.method === 'DELETE') {
+        req.useChunkedEncodingByDefault = true;
+      }
       req.write(postData);
     }
     req.end();
@@ -78,8 +81,10 @@ module.exports.makeRequest = async function (walletID, method, api, params, post
       'X-CHECKSUM': buildChecksum(params, apiCodeObj.secret, t, r, postData),
       "User-Agent": "nodejs",
     },
+    data: postData,
   };
-  if (method === 'POST') {
+
+  if (method === 'POST' || method === 'DELETE') {
     options.headers['Content-Type'] = 'application/json';
   }
 
