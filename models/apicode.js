@@ -28,7 +28,14 @@ module.exports.getAPICode = function (walletID) {
       if (!err && row) {
         resolve({ code: row.code, secret: row.secret });
       } else {
-        reject(null);
+        // try read-only API code
+        db.get(sql, [0], (err, row) => {
+          if (!err && row) {
+            resolve({ code: row.code, secret: row.secret });
+          } else {
+            reject(null);
+          }
+        });
       }
     });
     db.close();

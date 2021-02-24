@@ -59,7 +59,7 @@ function doRequest(url, options, postData) {
 }
 
 module.exports.makeRequest = async function (walletID, method, api, params, postData) {
-  if (walletID <= 0 || method === '' || api === '') {
+  if (walletID < 0 || method === '' || api === '') {
     return { error: 'invalid parameters' };
   }
   const r = rs.randomString(8);

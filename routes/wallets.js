@@ -187,13 +187,13 @@ router.get('/:wallet_id/apisecret', async function(req, res) {
 });
 
 router.post('/:wallet_id/apisecret/activate', async function(req, res) {
-  if (!req.params.wallet_id) {
-    res.status(400).json({ error: 'invalid parameters' });
-    return;
+  let url = '';
+  if (req.params.wallet_id === '0') {
+    url = '/v1/sofa/wallets/readonly/apisecret/activate';
+  } else {
+    url = `/v1/sofa/wallets/${req.params.wallet_id}/apisecret/activate`;
   }
-  const apires = await api.makeRequest(req.params.wallet_id, "POST",
-    `/v1/sofa/wallets/${req.params.wallet_id}/apisecret/activate`,
-    null, JSON.stringify(req.body));
+  const apires = await api.makeRequest(req.params.wallet_id, "POST", url, null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
@@ -610,6 +610,46 @@ router.post('/:wallet_id/sender/whitelist/check', async function(req, res) {
   const apires = await api.makeRequest(req.params.wallet_id, "POST",
     `/v1/sofa/wallets/${req.params.wallet_id}/sender/whitelist/check`,
     null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.post('/:wallet_id/addresses/label', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses/label`,
+    null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.post('/:wallet_id/addresses/get_labels', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/addresses/get_labels`,
+    null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.get('/readonly/walletlist', async function(req, res) {
+  const apires = await api.makeRequest(0, "GET",
+    '/v1/sofa/wallets/readonly/walletlist', getQueryParams(req.query), null);
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
   } else {
