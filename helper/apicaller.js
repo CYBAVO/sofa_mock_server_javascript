@@ -1,3 +1,13 @@
+// Copyright (c) 2018-2021 The CYBAVO developers
+// All Rights Reserved.
+// NOTICE: All information contained herein is, and remains
+// the property of CYBAVO and its suppliers,
+// if any. The intellectual and technical concepts contained
+// herein are proprietary to CYBAVO
+// Dissemination of this information or reproduction of this materia
+// is strictly forbidden unless prior written permission is obtained
+// from CYBAVO.
+
 const https = require('https');
 const crypto = require('crypto');
 const rs = require('./randstr');
@@ -58,8 +68,8 @@ function doRequest(url, options, postData) {
   });
 }
 
-module.exports.makeRequest = async function (walletID, method, api, params, postData) {
-  if (walletID < 0 || method === '' || api === '') {
+module.exports.makeRequest = async function (targetID, method, api, params, postData) {
+  if (targetID < 0 || method === '' || api === '') {
     return { error: 'invalid parameters' };
   }
   const r = rs.randomString(8);
@@ -68,7 +78,7 @@ module.exports.makeRequest = async function (walletID, method, api, params, post
   if (!!params) {
     url += `&${params.join('&')}`;
   }
-  const apiCodeObj = await apicode.getAPICode(walletID).catch(() => {
+  const apiCodeObj = await apicode.getAPICode(targetID).catch(() => {
   });
   if (!apiCodeObj) {
     console.log(`unable to find api code/secret of wallet_id ${walletID}`);
