@@ -81,8 +81,8 @@ module.exports.makeRequest = async function (targetID, method, api, params, post
   const apiCodeObj = await apicode.getAPICode(targetID).catch(() => {
   });
   if (!apiCodeObj) {
-    console.log(`unable to find api code/secret of wallet_id ${walletID}`);
-    return { error: `unable to find api code/secret of wallet_id ${walletID}` };
+    console.log(`unable to find api code/secret of wallet_id ${targetID}`);
+    return { error: `unable to find api code/secret of wallet_id ${targetID}` };
   }
   const options = {
     method,
