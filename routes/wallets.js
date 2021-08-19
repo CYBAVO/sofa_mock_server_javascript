@@ -431,15 +431,10 @@ router.post('/callback', async function(req, res) {
     Holding: 1,
     InPool: 2,
     InChain: 3,
-    Done: 4,
     Failed: 5,
-    Resended: 6,
-    RiskControl: 7,
     Cancelled: 8,
-    UTXOUnavailable: 9,
     Dropped: 10,
     InChainFailed: 11,
-    Paused: 12,
   };
 
   if (req.body.type === CallbackType.Deposit) {
@@ -674,6 +669,31 @@ router.post('/:wallet_id/notifications/inspect', async function(req, res) {
   }
   const apires = await api.makeRequest(req.params.wallet_id, "POST",
     `/v1/sofa/wallets/${req.params.wallet_id}/notifications/inspect`,
+    null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.get('/:wallet_id/sender/transactions', async function(req, res) {
+  const apires = await api.makeRequest(req.params.wallet_id, "GET",
+    `/v1/sofa/wallets/${req.params.wallet_id}/sender/transactions`, getQueryParams(req.query), null);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+router.post('/:wallet_id/autofees', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/autofees`,
     null, JSON.stringify(req.body));
   if (apires.statusCode) {
     res.status(apires.statusCode).json(apires.result);
