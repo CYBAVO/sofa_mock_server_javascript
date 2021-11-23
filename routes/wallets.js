@@ -746,5 +746,15 @@ router.get('/:wallet_id/sender/transactions/:order_id/all', async function(req, 
   }
 });
 
+router.get('/readonly/walletlist/balances', async function(req, res) {
+  const apires = await api.makeRequest(0, "GET",
+    '/v1/sofa/wallets/readonly/walletlist/balances', getQueryParams(req.query), null);
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 
 module.exports = router;
