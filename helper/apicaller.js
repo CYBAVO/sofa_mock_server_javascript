@@ -1,4 +1,4 @@
-// Copyright (c) 2018-2021 The CYBAVO developers
+// Copyright (c) 2018-2022 The CYBAVO developers
 // All Rights Reserved.
 // NOTICE: All information contained herein is, and remains
 // the property of CYBAVO and its suppliers,
@@ -49,7 +49,7 @@ function doRequest(url, options, postData) {
       });
       res.on('end', () => {
         let resBody = Buffer.concat(resData);
-        resolve({ result: tryParseJSON(resBody.toString()), statusCode: res.statusCode });
+        resolve({ result: tryParseJSON(resBody.toString()), statusCode: res.statusCode, headers: res.headers });
       });
       res.on('error', (error) => {
         reject(error);
@@ -98,10 +98,25 @@ module.exports.makeRequest = async function (targetID, method, api, params, post
   }
 
   try {
-    let result = await doRequest(url, options, postData);
-    const resp = tryParseJSON(result);
-    console.log('response ->', resp ? JSON.stringify(resp) : '');
-    return resp;
+    let { result, statusCode, headers } = await doRequest(url, options, postData);
+
+    if (statusCode !== 200) {
+      return { result, statusCode };
+    }
+
+    //
+    // verify checksum of a successful response
+    //
+    const checksum = headers['x-checksum'];
+    const payload = result ? JSON.stringify(result) + apiCodeObj.secret : apiCodeObj.secret;
+    const buff = Buffer.from(crypto.createHash('sha256').update(payload).digest());
+    const checksumVerf = buff.toString('base64').replace(/\+/g, "-").replace(/\//g, "_");
+    if (checksum !== checksumVerf) {
+      console.log('mismatched response checksum');
+      return { result: 'mismatched response checksum', statusCode: 400 };
+    }
+    console.log('response ->', { result, statusCode });
+    return { result, statusCode };
   } catch(error) {
     const resp = tryParseJSON(error);
     console.log('response ->', resp ? JSON.stringify(resp) : '');
