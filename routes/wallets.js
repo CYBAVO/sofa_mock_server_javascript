@@ -770,4 +770,19 @@ router.post('/:wallet_id/receiver/addresses/verify', async function(req, res) {
   }
 });
 
+router.post('/:wallet_id/receiver/get-balances', async function(req, res) {
+  if (!req.params.wallet_id) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.wallet_id, "POST",
+    `/v1/sofa/wallets/${req.params.wallet_id}/receiver/get-balances`,
+    null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
 module.exports = router;
