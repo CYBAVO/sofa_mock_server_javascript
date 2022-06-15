@@ -33,4 +33,21 @@ router.get('/prices', async function(req, res) {
   }
 });
 
+
+router.post('/:currency/contract/get-multiple-tokenuri', async function(req, res) {
+  if (!req.params.currency) {
+    res.status(400).json({ error: 'invalid parameters' });
+    return;
+  }
+  const apires = await api.makeRequest(req.params.currency, "POST",
+    `/v1/sofa/currency/${req.params.currency}/contract/get-multiple-tokenuri`,
+    null, JSON.stringify(req.body));
+  if (apires.statusCode) {
+    res.status(apires.statusCode).json(apires.result);
+  } else {
+    res.status(400).json(apires);
+  }
+});
+
+
 module.exports = router;
