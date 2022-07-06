@@ -8,6 +8,7 @@ var indexRouter = require('./routes/index');
 var walletsRouter = require('./routes/wallets');
 var merchantRouter = require('./routes/merchant');
 var currencyRouter = require('./routes/currency');
+var toolingRouter = require('./routes/tooling');
 
 var app = express();
 
@@ -21,6 +22,7 @@ app.use('/', indexRouter);
 app.use('/v1/mock/wallets', walletsRouter);
 app.use('/v1/mock/merchant', merchantRouter);
 app.use('/v1/mock/currency', currencyRouter);
+app.use('/v1/mock', toolingRouter);
 
 if (!semver.satisfies(process.version, '>=v10.19.0')) {
   console.log(`
